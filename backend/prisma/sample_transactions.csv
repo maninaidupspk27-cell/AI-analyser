@@ -1,0 +1,7 @@
+CustomerName,Email,Amount,Date,Status
+"Acme Corporation",john@acme.com,1500.00,2026-06-18,PAID
+"Beta Industries",sarah@betaind.com,2400.00,2026-06-17,PAID
+"Gamma Enterprises",richard@gamma.com,500.50,2026-06-16,PENDING
+"Delta Logistical",alice@deltalog.com,3000.00,2026-06-15,OVERDUE
+"Theta LLC",theta@test.com,4200.00,2026-06-10,PAID
+"Kappa Corp",kappa@test.com,120.00,2026-06-05,PENDING

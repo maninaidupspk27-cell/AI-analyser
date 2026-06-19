@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String          @id @default(uuid())
+  email        String          @unique
+  passwordHash String
+  fullName     String
+  role         String          @default("USER") // ADMIN, SALES_MANAGER, USER
+  credits      Int             @default(3)      // AI Generation Credits
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  uploads      UploadHistory[]
+  ratings      Rating[]
+  generations  Generation[]
+}
+
+model Customer {
+  id           String        @id @default(uuid())
+  companyName  String
+  contactName  String
+  email        String        @unique
+  phone        String
+  segmentId    String?
+  segment      Segment?      @relation(fields: [segmentId], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[]
+}
+
+model Transaction {
+  id              String   @id @default(uuid())
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  amount          Float
+  transactionDate DateTime @default(now())
+  status          String   @default("PENDING") // PAID | PENDING | OVERDUE
+  paymentMethod   String
+  createdAt       DateTime @default(now())
+}
+
+model Segment {
+  id              String           @id @default(uuid())
+  name            String           @unique
+  description     String
+  minRfmScore     Float
+  maxRfmScore     Float
+  customers       Customer[]
+  recommendations Recommendation[]
+}
+
+model Recommendation {
+  id              String   @id @default(uuid())
+  segmentId       String
+  segment         Segment  @relation(fields: [segmentId], references: [id], onDelete: Cascade)
+  strategyType    String // RETENTION | UPSELL | DISCOUNT | REMINDER | GROWTH
+  strategyContent String
+  promptVersion   String
+  createdAt       DateTime @default(now())
+  ratings         Rating[]
+}
+
+model Rating {
+  id               String         @id @default(uuid())
+  recommendationId String
+  recommendation   Recommendation @relation(fields: [recommendationId], references: [id], onDelete: Cascade)
+  userId           String
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ratingValue      Int // 1 to 5 Stars
+  feedbackText     String?
+  createdAt        DateTime       @default(now())
+}
+
+model UploadHistory {
+  id           String   @id @default(uuid())
+  filename     String
+  uploadedById String
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+  status       String   @default("PROCESSING") // PROCESSING | COMPLETED | FAILED
+  totalRows    Int      @default(0)
+  errorDetails String?
+  createdAt    DateTime @default(now())
+}
+
+model Generation {
+  id           String   @id @default(uuid())
+  subject      String
+  requirements String
+  constraints  String
+  preferences  String
+  aiResponse   String
+  rating       Int?
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+}

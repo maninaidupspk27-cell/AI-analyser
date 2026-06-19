@@ -1,0 +1,23 @@
+
+
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - DATABASE_URL=file:./dev.db
+      - JWT_SECRET=manikanta_super_secret_jwt_string_1782
+      - GEMINI_API_KEY=AIzaSyD_MOCK_GEMINI_KEY_1782A
+    volumes:
+      - ./backend/dev.db:/app/dev.db
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
