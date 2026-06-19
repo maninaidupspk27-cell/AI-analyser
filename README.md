@@ -11,9 +11,8 @@ A cutting-edge, fully working interactive AI generation tool designed to produce
 3. **History & Logging**: A dedicated history page to view, copy, export, and re-read all previously generated AI responses.
 4. **Instant PDF Exports**: High-quality, styled PDF export functionality powered by `html2pdf.js`.
 5. **Email Automation**: Instantly dispatch generated strategies via email using an integrated SMTP architecture.
-6. **Stripe Billing Monetization**: Credit-based economy system allowing users to purchase packages (e.g. 50 AI generations) via Stripe Checkout.
-7. **Admin Analytics**: High-level dashboard highlighting platform usage patterns and rating metrics.
-8. **Feedback System**: Embedded live 5-star rating mechanisms for all AI responses.
+6. **Admin Analytics**: High-level dashboard highlighting platform usage patterns and rating metrics.
+7. **Feedback System**: Embedded live 5-star rating mechanisms for all AI responses.
 
 ## Tech Stack
 

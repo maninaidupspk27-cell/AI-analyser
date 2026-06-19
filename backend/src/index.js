@@ -9,7 +9,6 @@ const settingsRoutes = require('./routes/settings');
 const exportRoutes = require('./routes/export');
 const generationRoutes = require('./routes/generation');
 const analyticsRoutes = require('./routes/analytics');
-const billingRoutes = require('./routes/billing');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -27,7 +26,6 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/export', exportRoutes);
 app.use('/api/generations', generationRoutes);
 app.use('/api/analytics', analyticsRoutes);
-app.use('/api/billing', billingRoutes);
 
 // Simple baseline API status check
 app.get('/api/status', (req, res) => {

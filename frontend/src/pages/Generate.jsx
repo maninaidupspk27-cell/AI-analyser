@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Send, FileText, Settings, Target, Copy, Download, Star, RefreshCw, FileImage, Mail } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import html2pdf from 'html2pdf.js';
+import { useReactToPrint } from 'react-to-print';
 
 export default function Generate() {
   const { user } = useAuth();
@@ -15,6 +15,7 @@ export default function Generate() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [rating, setRating] = useState(0);
+  const contentRef = useRef(null);
 
   const handleGenerate = async (e) => {
     if (e) e.preventDefault();
@@ -66,20 +67,11 @@ export default function Generate() {
     alert('Copied to clipboard!');
   };
 
-  const handleExportPDF = () => {
-    const element = document.getElementById('pdf-content');
-    if (!element) return;
-
-    const opt = {
-      margin:       0.5,
-      filename:     `Analysis_${formData.subject.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true },
-      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(element).save();
-  };
+  const handleExportPDF = useReactToPrint({
+    contentRef: contentRef,
+    documentTitle: formData.subject ? `Analysis_${formData.subject.replace(/[^a-zA-Z0-9]/g, '_')}` : 'Analysis_Report',
+    onPrintError: (error) => console.error(error),
+  });
 
   const handleEmail = async () => {
     if (!result) return;
@@ -176,7 +168,7 @@ export default function Generate() {
 
           <button
             type="submit"
-            disabled={loading || (user?.credits < 1)}
+            disabled={loading}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold shadow-lg shadow-indigo-900/20 disabled:opacity-50 transition-colors"
           >
             {loading ? (
@@ -184,14 +176,8 @@ export default function Generate() {
             ) : (
               <Send className="w-5 h-5" />
             )}
-            {loading ? 'Generating Strategy...' : user?.credits < 1 ? 'Insufficient Credits' : 'Generate AI Strategy (1 Credit)'}
+            {loading ? 'Generating Strategy...' : 'Generate AI Strategy'}
           </button>
-          
-          {user?.credits < 1 && (
-            <div className="mt-3 text-sm text-rose-400 text-center">
-              You have run out of AI Credits. <a href="/billing" className="underline font-bold text-rose-300">Upgrade to continue</a>
-            </div>
-          )}
         </form>
       </div>
 
@@ -241,7 +227,7 @@ export default function Generate() {
               <p>The AI is synthesizing your strategy...</p>
             </div>
           ) : result ? (
-            <div id="pdf-content" className="p-8 bg-white text-slate-900 rounded-lg shadow-inner min-h-full">
+            <div ref={contentRef} id="pdf-content" className="p-8 bg-white text-slate-900 rounded-lg shadow-inner min-h-full">
               <div className="border-b-2 border-indigo-600 pb-4 mb-6">
                 <h1 className="text-3xl font-black text-slate-900 tracking-tight">Manikanta Enterprises</h1>
                 <p className="text-sm font-semibold text-slate-500 uppercase mt-1">AI Strategic Analysis Report</p>

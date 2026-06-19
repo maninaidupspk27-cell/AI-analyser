@@ -10,12 +10,6 @@ const createGeneration = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Subject and Requirements are mandatory fields.' });
     }
 
-    // Check Credits
-    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-    if (!user || user.credits < 1) {
-      return res.status(403).json({ success: false, message: 'Insufficient credits. Please upgrade to generate more strategies.' });
-    }
-
     // Call Gemini Service
     const aiResponse = await generateCustomAnalysis({ subject, requirements, constraints, preferences });
 
@@ -31,13 +25,7 @@ const createGeneration = async (req, res, next) => {
       }
     });
 
-    // Decrement credits
-    await prisma.user.update({
-      where: { id: req.user.id },
-      data: { credits: user.credits - 1 }
-    });
-
-    res.status(201).json({ success: true, data: generation, remainingCredits: user.credits - 1 });
+    res.status(201).json({ success: true, data: generation });
 
   } catch (error) {
     next(error);

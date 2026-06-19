@@ -70,8 +70,7 @@ const getProfile = async (req, res, next) => {
         id: user.id,
         email: user.email,
         fullName: user.fullName,
-        role: user.role,
-        credits: user.credits
+        role: user.role
       }
     });
   } catch (error) {

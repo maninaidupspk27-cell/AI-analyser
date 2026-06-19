@@ -15,7 +15,6 @@ model User {
   passwordHash String
   fullName     String
   role         String          @default("USER") // ADMIN, SALES_MANAGER, USER
-  credits      Int             @default(3)      // AI Generation Credits
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
   uploads      UploadHistory[]

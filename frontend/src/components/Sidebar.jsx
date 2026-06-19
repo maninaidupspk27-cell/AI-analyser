@@ -25,7 +25,6 @@ export default function Sidebar({ collapsed, setCollapsed }) {
     { name: 'AI Recommendations', path: '/recommendations', icon: Sparkles, roles: ['ADMIN', 'SALES_MANAGER'] },
     { name: 'Analytics', path: '/analytics', icon: BarChart3, roles: ['ADMIN', 'SALES_MANAGER'] },
     { name: 'History Logs', path: '/history', icon: History, roles: ['ADMIN', 'SALES_MANAGER'] },
-    { name: 'Billing', path: '/billing', icon: CreditCard, roles: ['ADMIN', 'SALES_MANAGER'] },
     { name: 'Settings', path: '/settings', icon: Settings, roles: ['ADMIN'] }
   ];
 
@@ -86,29 +85,6 @@ export default function Sidebar({ collapsed, setCollapsed }) {
       </div>
 
       <div className="border-t border-slate-800">
-        {!collapsed && (
-          <div className="p-4 bg-slate-900 border-b border-slate-700">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-400">AI Credits</span>
-              <span className="text-xs font-bold bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full">
-                {user?.credits || 0}
-              </span>
-            </div>
-            <div className="w-full bg-slate-800 rounded-full h-1.5 mb-2">
-              <div 
-                className="bg-indigo-500 h-1.5 rounded-full" 
-                style={{ width: `${Math.min(((user?.credits || 0) / 150) * 100, 100)}%` }}
-              ></div>
-            </div>
-            <NavLink 
-              to="/billing"
-              className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center justify-center mt-2 w-full py-1.5 border border-indigo-500/30 rounded hover:bg-indigo-500/10 transition-colors"
-            >
-              Refill Credits
-            </NavLink>
-          </div>
-        )}
-        
         <div className="p-3">
           <button
             onClick={logout}

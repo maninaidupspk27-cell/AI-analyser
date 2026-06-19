@@ -13,7 +13,6 @@ import History from './pages/History';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
 import Generate from './pages/Generate';
-import Billing from './pages/Billing';
 
 // Protected Route wrapper component
 function ProtectedRoute({ children }) {
@@ -118,14 +117,6 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <History />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/billing" 
-              element={
-                <ProtectedRoute>
-                  <Billing />
                 </ProtectedRoute>
               } 
             />
