@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { History as HistoryIcon, Star, FileText } from 'lucide-react';
+import { History as HistoryIcon, Star, FileText, Eye, X } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 export default function History() {
   const { user } = useAuth();
   const [generations, setGenerations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedGen, setSelectedGen] = useState(null);
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -35,7 +37,7 @@ export default function History() {
         </h2>
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+      <div className="glass-panel rounded-2xl overflow-hidden hover-lift">
         {loading ? (
           <div className="flex justify-center py-12">
             <span className="animate-spin border-4 border-indigo-500 border-t-transparent rounded-full w-8 h-8"></span>
@@ -51,9 +53,11 @@ export default function History() {
               <thead>
                 <tr className="border-b border-slate-800 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
                   <th className="py-3 px-6">Date</th>
+                  <th className="py-3 px-6">Author</th>
                   <th className="py-3 px-6">Subject</th>
                   <th className="py-3 px-6">Requirements Snippet</th>
                   <th className="py-3 px-6 text-center">Rating</th>
+                  <th className="py-3 px-6 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60 text-sm">
@@ -61,6 +65,22 @@ export default function History() {
                   <tr key={gen.id} className="hover:bg-slate-850/20 transition-colors">
                     <td className="py-4 px-6 text-slate-400 whitespace-nowrap">
                       {new Date(gen.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="py-4 px-6">
+                      {gen.user ? (
+                        <div>
+                          <div className="font-semibold text-slate-200">{gen.user.fullName}</div>
+                          <div className={`mt-1 inline-flex px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                            gen.user.role === 'ADMIN' ? 'bg-rose-500/10 text-rose-400' :
+                            gen.user.role === 'SALES_MANAGER' ? 'bg-indigo-500/10 text-indigo-400' :
+                            'bg-slate-500/10 text-slate-400'
+                          }`}>
+                            {gen.user.role.replace('_', ' ')}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-slate-500 italic">Unknown</span>
+                      )}
                     </td>
                     <td className="py-4 px-6 font-semibold text-slate-200">
                       {gen.subject}
@@ -80,6 +100,15 @@ export default function History() {
                         )}
                       </div>
                     </td>
+                    <td className="py-4 px-6 text-center">
+                      <button
+                        onClick={() => setSelectedGen(gen)}
+                        className="inline-flex items-center justify-center p-2 rounded-lg bg-slate-800/50 text-slate-300 hover:text-white hover:bg-indigo-500/20 transition-all border border-slate-700 hover:border-indigo-500/50"
+                        title="View Generated Analysis"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -87,6 +116,35 @@ export default function History() {
           </div>
         )}
       </div>
+
+      {/* View Modal */}
+      {selectedGen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-slate-800">
+              <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+                <FileText className="w-5 h-5 text-indigo-400" />
+                Generated Analysis
+              </h3>
+              <button 
+                onClick={() => setSelectedGen(null)}
+                className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto custom-scrollbar">
+              <div className="mb-6 p-4 bg-slate-800/50 rounded-xl border border-slate-700/50">
+                <p className="text-sm text-slate-400 mb-1">Subject</p>
+                <p className="text-slate-200 font-semibold">{selectedGen.subject}</p>
+              </div>
+              <div className="prose prose-invert max-w-none prose-p:leading-relaxed prose-headings:text-slate-100 prose-a:text-indigo-400">
+                <ReactMarkdown>{selectedGen.aiResponse}</ReactMarkdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

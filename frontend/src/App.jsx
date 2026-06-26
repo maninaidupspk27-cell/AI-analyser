@@ -8,7 +8,6 @@ import Dashboard from './pages/Dashboard';
 import UploadCSV from './pages/UploadCSV';
 import CustomerSegments from './pages/CustomerSegments';
 import CustomerDetails from './pages/CustomerDetails';
-import Recommendations from './pages/Recommendations';
 import History from './pages/History';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
@@ -93,14 +92,6 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <CustomerSegments />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/recommendations" 
-              element={
-                <ProtectedRoute>
-                  <Recommendations />
                 </ProtectedRoute>
               } 
             />

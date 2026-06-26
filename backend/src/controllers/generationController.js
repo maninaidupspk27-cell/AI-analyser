@@ -34,10 +34,19 @@ const createGeneration = async (req, res, next) => {
 
 const getGenerations = async (req, res, next) => {
   try {
-    const generations = await prisma.generation.findMany({
-      where: { userId: req.user.id },
-      orderBy: { createdAt: 'desc' }
-    });
+    const query = {
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: { select: { fullName: true, email: true, role: true } }
+      }
+    };
+    
+    // Restrict standard users to only see their own generations
+    if (req.user.role === 'USER') {
+      query.where = { userId: req.user.id };
+    }
+
+    const generations = await prisma.generation.findMany(query);
 
     res.status(200).json({ success: true, count: generations.length, data: generations });
   } catch (error) {

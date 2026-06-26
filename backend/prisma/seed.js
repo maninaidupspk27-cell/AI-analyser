@@ -35,7 +35,16 @@ async function main() {
     }
   });
 
-  console.log(`Created default user logins: Admin (${adminUser.email}), Sales (${salesUser.email})`);
+  const basicUser = await prisma.user.create({
+    data: {
+      email: 'user@manikanta.com',
+      fullName: 'Entry-Level Rep',
+      role: 'USER',
+      passwordHash: bcrypt.hashSync('user123', 10)
+    }
+  });
+
+  console.log(`Created default user logins: Admin (${adminUser.email}), Sales (${salesUser.email}), Rep (${basicUser.email})`);
 
   // 2. Create Default Segments
   const vipSegment = await prisma.segment.create({

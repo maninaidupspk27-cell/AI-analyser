@@ -18,7 +18,6 @@ model User {
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
   uploads      UploadHistory[]
-  ratings      Rating[]
   generations  Generation[]
 }
 
@@ -53,30 +52,9 @@ model Segment {
   minRfmScore     Float
   maxRfmScore     Float
   customers       Customer[]
-  recommendations Recommendation[]
 }
 
-model Recommendation {
-  id              String   @id @default(uuid())
-  segmentId       String
-  segment         Segment  @relation(fields: [segmentId], references: [id], onDelete: Cascade)
-  strategyType    String // RETENTION | UPSELL | DISCOUNT | REMINDER | GROWTH
-  strategyContent String
-  promptVersion   String
-  createdAt       DateTime @default(now())
-  ratings         Rating[]
-}
 
-model Rating {
-  id               String         @id @default(uuid())
-  recommendationId String
-  recommendation   Recommendation @relation(fields: [recommendationId], references: [id], onDelete: Cascade)
-  userId           String
-  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  ratingValue      Int // 1 to 5 Stars
-  feedbackText     String?
-  createdAt        DateTime       @default(now())
-}
 
 model UploadHistory {
   id           String   @id @default(uuid())

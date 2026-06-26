@@ -3,6 +3,7 @@ const prisma = require('../config/db');
 const getAnalytics = async (req, res, next) => {
   try {
     const generations = await prisma.generation.findMany({
+      include: { user: true },
       orderBy: { createdAt: 'asc' }
     });
 
@@ -51,6 +52,31 @@ const getAnalytics = async (req, res, next) => {
       time: new Date(g.createdAt).toISOString()
     }));
 
+    // Build team performance leaderboard
+    const teamStats = {};
+    generations.forEach(g => {
+      const email = g.user.email;
+      const name = g.user.fullName;
+      if (!teamStats[email]) {
+        teamStats[email] = { name, email, role: g.user.role, generationsCount: 0, ratingSum: 0, ratingCount: 0 };
+      }
+      teamStats[email].generationsCount++;
+      if (g.rating != null) {
+        teamStats[email].ratingSum += g.rating;
+        teamStats[email].ratingCount++;
+      }
+    });
+
+    const teamPerformance = Object.values(teamStats).map(member => ({
+      name: member.name,
+      email: member.email,
+      role: member.role,
+      generationsCount: member.generationsCount,
+      averageRating: member.ratingCount > 0 
+        ? parseFloat((member.ratingSum / member.ratingCount).toFixed(1)) 
+        : null
+    })).sort((a, b) => b.generationsCount - a.generationsCount);
+
     res.status(200).json({
       success: true,
       summary: {
@@ -59,7 +85,8 @@ const getAnalytics = async (req, res, next) => {
         totalRated: ratedGenerations.length
       },
       usageTrends,
-      recentActivities
+      recentActivities,
+      teamPerformance
     });
 
   } catch (error) {

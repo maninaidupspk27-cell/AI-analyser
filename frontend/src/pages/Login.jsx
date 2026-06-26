@@ -21,9 +21,12 @@ export default function Login() {
     if (role === 'admin') {
       setEmail('admin@manikanta.com');
       setPassword('admin123');
-    } else {
+    } else if (role === 'sales') {
       setEmail('sales@manikanta.com');
       setPassword('sales123');
+    } else {
+      setEmail('user@manikanta.com');
+      setPassword('user123');
     }
   };
 
@@ -122,6 +125,13 @@ export default function Login() {
             >
               <UserCheck className="w-4 h-4 text-sky-500" />
               Sales Manager
+            </button>
+            <button
+              onClick={() => handleQuickLogin('user')}
+              className="col-span-2 flex items-center justify-center gap-2 px-3 py-2 bg-slate-950 border border-slate-800 hover:border-purple-500/30 hover:bg-purple-500/5 rounded-xl text-xs font-semibold text-slate-300 hover:text-purple-400 transition-all cursor-pointer"
+            >
+              <Mail className="w-4 h-4 text-purple-500" />
+              Entry-Level Rep
             </button>
           </div>
         </div>

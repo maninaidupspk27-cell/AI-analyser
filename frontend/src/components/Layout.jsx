@@ -24,7 +24,12 @@ export default function Layout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased relative overflow-hidden">
+      {/* Global Background Gradient Orbs */}
+      <div className="fixed top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none animate-pulse"></div>
+      <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-emerald-600/10 rounded-full blur-[100px] pointer-events-none animate-pulse delay-700"></div>
+      <div className="fixed top-[40%] left-[50%] w-[30vw] h-[30vw] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none animate-float"></div>
+
       {/* Sidebar Navigation */}
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
 
@@ -42,7 +47,7 @@ export default function Layout({ children }) {
         />
 
         {/* Dynamic Inner Page Content */}
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 p-6 overflow-y-auto animate-on-mount relative z-10">
           {children}
         </main>
       </div>

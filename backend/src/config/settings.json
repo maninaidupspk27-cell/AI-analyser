@@ -1,5 +1,5 @@
 {
-  "apiKey": "AIzaSyD_TEST_REAL_API_KEY_1234X",
-  "model": "gemini-2.5-pro",
+  "apiKey": "",
+  "model": "gemini-2.5-flash",
   "systemPrompt": "PERSISTED_INSTRUCTION: Act as a cash-flow-risk expert."
 }

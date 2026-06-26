@@ -103,7 +103,7 @@ export default function Generate() {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-8rem)]">
       
       {/* Form Sidebar */}
-      <div className="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl p-6 overflow-y-auto">
+      <div className="lg:col-span-4 glass-panel p-6 overflow-y-auto hover-lift">
         <h2 className="text-xl font-bold text-slate-100 mb-6 flex items-center gap-2">
           <Settings className="w-5 h-5 text-indigo-400" />
           AI Analysis Request
@@ -169,7 +169,7 @@ export default function Generate() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold shadow-lg shadow-indigo-900/20 disabled:opacity-50 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 disabled:opacity-50 transition-all duration-300 animate-glow"
           >
             {loading ? (
               <RefreshCw className="w-5 h-5 animate-spin" />
@@ -182,7 +182,7 @@ export default function Generate() {
       </div>
 
       {/* Result Area */}
-      <div className="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl flex flex-col overflow-hidden">
+      <div className="lg:col-span-8 glass-panel flex flex-col overflow-hidden hover-lift">
         
         {/* Header Actions */}
         <div className="border-b border-slate-800 px-6 py-4 flex items-center justify-between bg-slate-850">
@@ -220,7 +220,7 @@ export default function Generate() {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 p-6 overflow-y-auto bg-slate-900 relative">
+        <div className="flex-1 p-6 overflow-y-auto bg-slate-900/40 relative">
           {loading ? (
             <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-4">
               <RefreshCw className="w-8 h-8 animate-spin text-indigo-500" />

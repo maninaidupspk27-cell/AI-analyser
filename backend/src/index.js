@@ -4,7 +4,6 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const customerRoutes = require('./routes/customer');
-const recommendationRoutes = require('./routes/recommendation');
 const settingsRoutes = require('./routes/settings');
 const exportRoutes = require('./routes/export');
 const generationRoutes = require('./routes/generation');
@@ -18,10 +17,14 @@ const PORT = process.env.PORT || 5000;
 app.use(cors()); // Enables cross-origin sharing for frontend web client queries
 app.use(express.json()); // Automatically parses incoming application/json bodies
 
+app.use((req, res, next) => {
+  console.log(`[API REQUEST] ${req.method} ${req.url}`);
+  next();
+});
+
 // API Router Mounts
 app.use('/api/auth', authRoutes);
 app.use('/api/customers', customerRoutes);
-app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/export', exportRoutes);
 app.use('/api/generations', generationRoutes);

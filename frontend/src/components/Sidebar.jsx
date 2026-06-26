@@ -13,16 +13,16 @@ import {
   Sparkles,
   BarChart3,
   PlusCircle,
-  CreditCard
+  CreditCard,
+  Target
 } from 'lucide-react';
 
 export default function Sidebar({ collapsed, setCollapsed }) {
   const { user, logout } = useAuth();
 
   const menuItems = [
-    { name: 'Dashboard', path: '/', icon: LayoutDashboard, roles: ['ADMIN', 'SALES_MANAGER'] },
-    { name: 'New Generation', path: '/generate', icon: PlusCircle, roles: ['ADMIN', 'SALES_MANAGER'] },
-    { name: 'AI Recommendations', path: '/recommendations', icon: Sparkles, roles: ['ADMIN', 'SALES_MANAGER'] },
+    { name: 'Dashboard', path: '/', icon: LayoutDashboard, roles: ['ADMIN', 'SALES_MANAGER', 'USER'] },
+    { name: 'New Generation', path: '/generate', icon: Target, roles: ['ADMIN', 'SALES_MANAGER', 'USER'] },
     { name: 'Analytics', path: '/analytics', icon: BarChart3, roles: ['ADMIN', 'SALES_MANAGER'] },
     { name: 'History Logs', path: '/history', icon: History, roles: ['ADMIN', 'SALES_MANAGER'] },
     { name: 'Settings', path: '/settings', icon: Settings, roles: ['ADMIN'] }
@@ -32,7 +32,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
 
   return (
     <aside 
-      className={`fixed top-0 left-0 h-screen bg-slate-900 border-r border-slate-800 text-slate-200 transition-all duration-300 z-30 flex flex-col justify-between
+      className={`fixed top-0 left-0 h-screen glass-panel text-slate-200 transition-all duration-300 z-30 flex flex-col justify-between
         ${collapsed ? 'w-20' : 'w-64'}
       `}
     >
@@ -43,8 +43,8 @@ export default function Sidebar({ collapsed, setCollapsed }) {
               <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30">
                 M
               </div>
-              <span className="font-semibold text-lg bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-                Manikanta AI
+              <span className="font-semibold text-sm gradient-text leading-tight">
+                AI Customer Segment Profitability Analyzer
               </span>
             </div>
           )}

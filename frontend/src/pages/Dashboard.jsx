@@ -86,7 +86,7 @@ export default function Dashboard() {
     <div className="space-y-6">
       
       {/* Top Welcome Title Banner */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900 border border-slate-800 p-6 rounded-2xl gap-4 shadow-lg shadow-slate-950/20">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center glass-panel p-6 rounded-2xl gap-4">
         <div>
           <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
             Welcome to Manikanta Executive Portal <Sparkles className="w-5 h-5 text-indigo-400" />
@@ -104,7 +104,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Card 1: Total Revenue */}
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-slate-700/80 transition-all duration-300 shadow-xl group hover:shadow-indigo-600/5">
+        <div className="glass-panel p-6 rounded-2xl hover-lift group">
           <div className="flex justify-between items-start">
             <div className="space-y-2">
               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Total Revenue</span>
@@ -122,7 +122,7 @@ export default function Dashboard() {
         </div>
 
         {/* Card 2: Total Customers */}
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-slate-700/80 transition-all duration-300 shadow-xl group hover:shadow-emerald-600/5">
+        <div className="glass-panel p-6 rounded-2xl hover-lift group">
           <div className="flex justify-between items-start">
             <div className="space-y-2">
               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Active Accounts</span>
@@ -140,7 +140,7 @@ export default function Dashboard() {
         </div>
 
         {/* Card 3: Overdue Payments Ratio */}
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-slate-700/80 transition-all duration-300 shadow-xl group hover:shadow-amber-600/5">
+        <div className="glass-panel p-6 rounded-2xl hover-lift group">
           <div className="flex justify-between items-start">
             <div className="space-y-2">
               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Overdue Accounts</span>
@@ -162,7 +162,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Left Column (2/3 width on large screens): Sales Line Trend Chart */}
-        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl flex flex-col justify-between">
+        <div className="lg:col-span-2 glass-panel p-6 rounded-2xl flex flex-col justify-between hover-lift">
           <div className="flex justify-between items-center mb-6">
             <div>
               <h3 className="font-bold text-slate-200">Revenue Performance Trends</h3>
@@ -209,7 +209,7 @@ export default function Dashboard() {
         </div>
 
         {/* Right Column (1/3 width on large screens): Segment distribution donut chart */}
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl flex flex-col justify-between">
+        <div className="glass-panel p-6 rounded-2xl flex flex-col justify-between hover-lift">
           <div className="mb-4">
             <h3 className="font-bold text-slate-200 font-sans">Segment Distribution</h3>
             <p className="text-[10px] text-slate-500 mt-0.5">Current counts of profitability clusters</p>
@@ -266,7 +266,7 @@ export default function Dashboard() {
       </div>
 
       {/* Bottom Row - Recent Activity log list */}
-      <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+      <div className="glass-panel p-6 rounded-2xl hover-lift">
         <div className="mb-6">
           <h3 className="font-bold text-slate-200">Recent Portal Activity Logs</h3>
           <p className="text-[10px] text-slate-500 mt-0.5">Tracks upload activity and AI strategy revisions</p>
