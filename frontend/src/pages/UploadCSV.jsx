@@ -60,7 +60,7 @@ export default function UploadCSV() {
       addLog('Uploading file to backend transaction ingestion engine...', 'info');
       setProgress(30);
 
-      const response = await fetch('http://localhost:5000/api/customers/upload', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/customers/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${user?.token}`

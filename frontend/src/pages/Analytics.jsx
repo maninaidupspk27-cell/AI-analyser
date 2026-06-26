@@ -14,7 +14,7 @@ export default function Analytics() {
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/analytics', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/analytics`, {
           headers: { 'Authorization': `Bearer ${user?.token}` }
         });
         const data = await response.json();

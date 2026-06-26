@@ -33,7 +33,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/customers/analytics', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/customers/analytics`, {
           headers: {
             'Authorization': `Bearer ${user?.token}`
           }

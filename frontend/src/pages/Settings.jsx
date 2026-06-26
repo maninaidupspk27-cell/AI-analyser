@@ -30,7 +30,7 @@ export default function Settings() {
     const fetchSettings = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:5000/api/settings', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/settings`, {
           headers: {
             'Authorization': `Bearer ${user?.token}`
           }
@@ -63,7 +63,7 @@ export default function Settings() {
     
     setIsSaving(true);
     try {
-      const response = await fetch('http://localhost:5000/api/settings', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/settings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

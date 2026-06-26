@@ -24,7 +24,7 @@ export default function Generate() {
     setRating(0);
 
     try {
-      const response = await fetch('http://localhost:5000/api/generations', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/generations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ export default function Generate() {
     if (!result) return;
     try {
       setRating(val);
-      await fetch(`http://localhost:5000/api/generations/${result.id}/rate`, {
+      await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/generations/${result.id}/rate`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -79,7 +79,7 @@ export default function Generate() {
     if (!email) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/generations/${result.id}/email`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/generations/${result.id}/email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -12,7 +12,7 @@ export default function History() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/generations', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/generations`, {
           headers: { 'Authorization': `Bearer ${user?.token}` }
         });
         const data = await response.json();
