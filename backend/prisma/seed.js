@@ -3,8 +3,6 @@ const bcrypt = require('bcryptjs');
 
 async function main() {
   console.log('Clearing database tables...');
-  await prisma.rating.deleteMany();
-  await prisma.recommendation.deleteMany();
   await prisma.transaction.deleteMany();
   await prisma.customer.deleteMany();
   await prisma.segment.deleteMany();
@@ -177,32 +175,6 @@ async function main() {
   });
 
   console.log('Created transaction records logs.');
-
-  // 5. Create Default AI Recommendations associated with Segments
-  await prisma.recommendation.createMany({
-    data: [
-      {
-        segmentId: vipSegment.id,
-        strategyType: 'RETENTION',
-        strategyContent: 'Assign personal accounts managers. Reward with exclusive 10% rebate options for settling invoices within 10 days.',
-        promptVersion: 'V4 (JSON)'
-      },
-      {
-        segmentId: regularSegment.id,
-        strategyType: 'NURTURE',
-        strategyContent: 'Enroll in standard update scripts. Promotes mid-tier subscription expansion packages.',
-        promptVersion: 'V4 (JSON)'
-      },
-      {
-        segmentId: atRiskSegment.id,
-        strategyType: 'RECOVERY',
-        strategyContent: 'Trigger personal re-engagement calls. Propose invoice division models (3-part splitting options) to settle pending debt.',
-        promptVersion: 'V4 (JSON)'
-      }
-    ]
-  });
-
-  console.log('Created baseline AI recommendation strategies.');
   console.log('Database seeding operation completed successfully!');
 }
 
