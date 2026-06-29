@@ -72,14 +72,14 @@ export default function CustomerSegments() {
     if (search.trim()) {
       const query = search.toLowerCase();
       result = result.filter(c => 
-        c.name.toLowerCase().includes(query) || 
-        c.location.toLowerCase().includes(query) || 
-        c.id.toLowerCase().includes(query)
+        (c.name || '').toLowerCase().includes(query) || 
+        (c.location || '').toLowerCase().includes(query) || 
+        (c.id || '').toLowerCase().includes(query)
       );
     }
 
     if (segmentFilter !== 'ALL') {
-      result = result.filter(c => c.segment.toUpperCase().replace(' ', '_') === segmentFilter);
+      result = result.filter(c => (c.segment || '').toUpperCase().replace(/ /g, '_') === segmentFilter);
     }
 
     if (statusFilter !== 'ALL') {
@@ -90,9 +90,9 @@ export default function CustomerSegments() {
       let aVal = a[sortField];
       let bVal = b[sortField];
 
-      if (typeof aVal === 'string') {
-        aVal = aVal.toLowerCase();
-        bVal = bVal.toLowerCase();
+      if (typeof aVal === 'string' || typeof bVal === 'string') {
+        aVal = (aVal || '').toString().toLowerCase();
+        bVal = (bVal || '').toString().toLowerCase();
       }
 
       if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
@@ -194,21 +194,21 @@ export default function CustomerSegments() {
                 <tr><td colSpan="7" className="py-8 text-center text-slate-500 font-medium italic">No matching records found.</td></tr>
               ) : (
                 paginatedCustomers.map((cust) => (
-                  <tr key={cust.id} className="hover:bg-slate-850/30 transition-all duration-150">
+                  <tr key={cust.id || Math.random()} className="hover:bg-slate-850/30 transition-all duration-150">
                     <td className="py-4 px-6">
-                      <span className="text-xs font-bold text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded-md border border-indigo-500/20">{cust.id}</span>
+                      <span className="text-xs font-bold text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded-md border border-indigo-500/20">{cust.id || 'N/A'}</span>
                     </td>
                     <td className="py-4 px-6">
                       <div className="flex flex-col gap-1">
                         <span className="font-semibold text-slate-200 flex items-center gap-1.5 text-sm">
-                          <Building className="w-3.5 h-3.5 text-indigo-400 shrink-0" /> {cust.name}
+                          <Building className="w-3.5 h-3.5 text-indigo-400 shrink-0" /> {cust.name || 'Unknown Company'}
                         </span>
-                        <span className="text-[10px] text-slate-500 font-medium">{cust.location}</span>
+                        <span className="text-[10px] text-slate-500 font-medium">{cust.location || 'Unknown Location'}</span>
                       </div>
                     </td>
-                    <td className="py-4 px-6 font-bold text-slate-200 text-sm">${cust.totalPurchases.toLocaleString()}</td>
-                    <td className="py-4 px-6"><div className="flex flex-col"><span className="font-semibold text-slate-300">{cust.orders}</span></div></td>
-                    <td className="py-4 px-6"><span className={`px-2.5 py-1 text-[10px] font-bold rounded-lg ${getSegmentBadge(cust.segment)}`}>{cust.segment}</span></td>
+                    <td className="py-4 px-6 font-bold text-slate-200 text-sm">${(cust.totalPurchases || 0).toLocaleString()}</td>
+                    <td className="py-4 px-6"><div className="flex flex-col"><span className="font-semibold text-slate-300">{cust.orders || 0}</span></div></td>
+                    <td className="py-4 px-6"><span className={`px-2.5 py-1 text-[10px] font-bold rounded-lg ${getSegmentBadge(cust.segment)}`}>{cust.segment || 'Unassigned'}</span></td>
                     <td className="py-4 px-6">{getStatusBadge(cust.status)}</td>
                     <td className="py-4 px-6 text-right">
                       <div className="flex items-center justify-end gap-2">
