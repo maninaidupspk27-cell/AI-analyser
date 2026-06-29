@@ -486,10 +486,59 @@ const createCustomer = async (req, res, next) => {
   }
 };
 
+/**
+ * Updates an existing customer manually.
+ */
+const updateCustomer = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const {
+      customerName,
+      totalPurchases,
+      orders,
+      avgOrderValue,
+      paymentDelayDays,
+      outstanding,
+      repeatRate,
+      returns,
+      location,
+      segmentId
+    } = req.body;
+
+    const updatedCustomer = await prisma.customer.update({
+      where: { id },
+      data: {
+        customerName,
+        totalPurchases: parseFloat(totalPurchases),
+        orders: parseInt(orders),
+        avgOrderValue: parseFloat(avgOrderValue),
+        paymentDelayDays: parseInt(paymentDelayDays),
+        outstanding: parseFloat(outstanding),
+        repeatRate: parseFloat(repeatRate),
+        returns: parseInt(returns),
+        location,
+        segmentId
+      }
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Customer updated successfully',
+      customer: updatedCustomer
+    });
+  } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ success: false, message: 'Customer not found.' });
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   getCustomers,
   getCustomerById,
   createCustomer,
+  updateCustomer,
   submitFeedback,
   getAnalytics,
   feedbackSchema

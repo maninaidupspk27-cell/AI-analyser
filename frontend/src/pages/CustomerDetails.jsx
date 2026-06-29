@@ -16,8 +16,10 @@ import {
   MessageSquareCode,
   AlertTriangle,
   Repeat,
-  PackageX
+  PackageX,
+  Edit
 } from 'lucide-react';
+import EditCustomerModal from '../components/EditCustomerModal';
 
 const mockAIRecommendations = {
   'VIP Customers': {
@@ -59,26 +61,29 @@ export default function CustomerDetails() {
   const [hover, setHover] = useState(0);
   const [feedback, setFeedback] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const fetchCustomer = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/customers/${id}`, {
+        headers: { 'Authorization': `Bearer ${user?.token}` }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setCustomer(data.customer);
+      } else {
+        addToast(data.message || 'Customer not found', 'error');
+        navigate('/segments');
+      }
+    } catch (err) {
+      addToast('Failed to fetch customer details', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchCustomer = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/customers/${id}`, {
-          headers: { 'Authorization': `Bearer ${user?.token}` }
-        });
-        const data = await response.json();
-        if (data.success) {
-          setCustomer(data.customer);
-        } else {
-          addToast(data.message || 'Customer not found', 'error');
-          navigate('/segments');
-        }
-      } catch (err) {
-        addToast('Failed to fetch customer details', 'error');
-      } finally {
-        setLoading(false);
-      }
-    };
     if (user?.token) fetchCustomer();
   }, [id, user?.token, navigate, addToast]);
 
@@ -156,7 +161,16 @@ export default function CustomerDetails() {
                 <Building className="w-7 h-7" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-100">{customer.name}</h2>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-xl font-bold text-slate-100">{customer.name}</h2>
+                  <button 
+                    onClick={() => setIsEditModalOpen(true)}
+                    className="p-1.5 bg-slate-800 hover:bg-indigo-600/20 text-slate-400 hover:text-indigo-400 rounded-lg transition-colors"
+                    title="Edit Customer"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                </div>
                 <div className="flex items-center gap-2 mt-1.5">
                   <span className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${getSegmentStyles(customer.segment)}`}>
                     {customer.segment}
@@ -289,6 +303,16 @@ export default function CustomerDetails() {
           </div>
         </div>
       </div>
+
+      <EditCustomerModal 
+        isOpen={isEditModalOpen} 
+        onClose={() => setIsEditModalOpen(false)} 
+        onCustomerUpdated={(updatedCust) => {
+          fetchCustomer();
+          addToast('Customer updated successfully!', 'success');
+        }}
+        initialData={customer}
+      />
     </div>
   );
 }
