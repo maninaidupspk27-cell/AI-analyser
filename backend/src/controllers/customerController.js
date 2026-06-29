@@ -9,41 +9,19 @@ const feedbackSchema = z.object({
 
 // Helper function to map Prisma customer record to frontend representation
 function mapCustomerData(customer, now) {
-  const txs = customer.transactions || [];
-  
-  // Recalculate Monetary (Revenue)
-  const revenue = txs.reduce((sum, t) => sum + t.amount, 0);
-  
-  // Recalculate Frequency
-  const frequency = txs.length;
-  
-  // Recalculate Recency
-  let recency = 180; // Default fallback in days
-  if (txs.length > 0) {
-    const latestTxDate = new Date(Math.max(...txs.map(t => new Date(t.transactionDate).getTime())));
-    const diffTime = Math.abs(now - latestTxDate);
-    recency = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  }
-
-  // Derive Status dynamically
-  let status = 'PAID';
-  if (txs.some(t => t.status === 'OVERDUE')) {
-    status = 'OVERDUE';
-  } else if (txs.some(t => t.status === 'PENDING')) {
-    status = 'PENDING';
-  }
-
   return {
     id: customer.id,
-    name: customer.companyName,
-    contact: customer.contactName,
-    email: customer.email,
-    phone: customer.phone,
-    revenue,
-    recency,
-    frequency,
+    name: customer.customerName,
+    totalPurchases: customer.totalPurchases,
+    orders: customer.orders,
+    avgOrderValue: customer.avgOrderValue,
+    paymentDelayDays: customer.paymentDelayDays,
+    outstanding: customer.outstanding,
+    repeatRate: customer.repeatRate,
+    returns: customer.returns,
+    location: customer.location,
     segment: customer.segment ? customer.segment.name : 'Unassigned',
-    status
+    status: customer.outstanding > 0 ? (customer.paymentDelayDays > 30 ? 'OVERDUE' : 'PENDING') : 'PAID'
   };
 }
 
@@ -54,11 +32,10 @@ const getCustomers = async (req, res, next) => {
   try {
     const { search, segment, status, sortBy, sortDir } = req.query;
     
-    // Fetch all customers from DB with nested transactions and segment data
+    // Fetch all customers from DB with segment data
     const customers = await prisma.customer.findMany({
       include: {
-        segment: true,
-        transactions: true
+        segment: true
       }
     });
 
@@ -70,8 +47,8 @@ const getCustomers = async (req, res, next) => {
       const query = search.toLowerCase();
       result = result.filter(c => 
         c.name.toLowerCase().includes(query) ||
-        c.contact.toLowerCase().includes(query) ||
-        c.email.toLowerCase().includes(query)
+        c.location.toLowerCase().includes(query) ||
+        c.id.toLowerCase().includes(query)
       );
     }
 
@@ -120,12 +97,7 @@ const getCustomerById = async (req, res, next) => {
     const customer = await prisma.customer.findUnique({
       where: { id },
       include: {
-        segment: true,
-        transactions: {
-          orderBy: {
-            transactionDate: 'desc'
-          }
-        }
+        segment: true
       }
     });
 
@@ -139,20 +111,9 @@ const getCustomerById = async (req, res, next) => {
     const now = new Date();
     const mappedCustomer = mapCustomerData(customer, now);
 
-    const transactions = customer.transactions.map(t => ({
-      id: t.id,
-      date: new Date(t.transactionDate).toISOString().split('T')[0],
-      amount: t.amount,
-      status: t.status,
-      method: t.paymentMethod
-    }));
-
     return res.status(200).json({
       success: true,
-      customer: {
-        ...mappedCustomer,
-        transactions
-      }
+      customer: mappedCustomer
     });
   } catch (error) {
     next(error);
@@ -230,22 +191,10 @@ const submitFeedback = async (req, res, next) => {
  */
 const getAnalytics = async (req, res, next) => {
   try {
-    // 1. Fetch all customers with their transactions and segments
+    // 1. Fetch all customers with segments
     const customers = await prisma.customer.findMany({
       include: {
-        segment: true,
-        transactions: true
-      }
-    });
-
-    // 2. Fetch all transactions
-    const transactions = await prisma.transaction.findMany({
-      include: {
-        customer: {
-          include: {
-            segment: true
-          }
-        }
+        segment: true
       }
     });
 
@@ -276,23 +225,22 @@ const getAnalytics = async (req, res, next) => {
     });
 
     // Calculations
-    const totalRevenue = transactions.reduce((sum, t) => sum + t.amount, 0);
+    const totalRevenue = customers.reduce((sum, c) => sum + c.totalPurchases, 0);
     const totalCustomers = customers.length;
     
-    // Customers with overdue transactions
-    const overdueCustomersCount = customers.filter(c => 
-      c.transactions.some(t => t.status === 'OVERDUE')
-    ).length;
+    // Customers with overdue payments
+    const overdueCustomersCount = customers.filter(c => c.outstanding > 0 && c.paymentDelayDays > 30).length;
 
     // AOV
-    const aov = transactions.length > 0 ? Math.round(totalRevenue / transactions.length) : 0;
+    const aov = customers.length > 0 ? Math.round(customers.reduce((sum, c) => sum + c.avgOrderValue, 0) / customers.length) : 0;
 
     // Collection Efficiency
-    const paidRevenue = transactions.filter(t => t.status === 'PAID').reduce((sum, t) => sum + t.amount, 0);
+    const outstandingRevenue = customers.reduce((sum, c) => sum + c.outstanding, 0);
+    const paidRevenue = totalRevenue - outstandingRevenue;
     const collectionEfficiency = totalRevenue > 0 ? Math.round((paidRevenue / totalRevenue) * 100) : 0;
 
     // VIP Revenue Contribution
-    const vipRevenue = transactions.filter(t => t.customer?.segment?.name === 'VIP Customers').reduce((sum, t) => sum + t.amount, 0);
+    const vipRevenue = customers.filter(c => c.segment?.name === 'VIP Customers').reduce((sum, c) => sum + c.totalPurchases, 0);
     const vipRevenueContribution = totalRevenue > 0 ? parseFloat(((vipRevenue / totalRevenue) * 100).toFixed(1)) : 0;
 
     // Build Monthly Revenue & Target (Jan - Jun)
@@ -300,13 +248,18 @@ const getAnalytics = async (req, res, next) => {
     const monthlyRevenues = [0, 0, 0, 0, 0, 0];
     const monthlyTransactionCount = [0, 0, 0, 0, 0, 0];
 
-    transactions.forEach(t => {
-      const date = new Date(t.transactionDate);
-      const m = date.getMonth(); // 0-11
-      if (m >= 0 && m <= 5 && date.getFullYear() === 2026) {
-        monthlyRevenues[m] += t.amount;
-        monthlyTransactionCount[m] += 1;
-      }
+    // Mock distribute revenue over months
+    customers.forEach(c => {
+      monthlyRevenues[5] += c.totalPurchases * 0.3;
+      monthlyRevenues[4] += c.totalPurchases * 0.25;
+      monthlyRevenues[3] += c.totalPurchases * 0.2;
+      monthlyRevenues[2] += c.totalPurchases * 0.15;
+      monthlyRevenues[1] += c.totalPurchases * 0.05;
+      monthlyRevenues[0] += c.totalPurchases * 0.05;
+      
+      monthlyTransactionCount[5] += Math.round(c.orders * 0.3);
+      monthlyTransactionCount[4] += Math.round(c.orders * 0.25);
+      monthlyTransactionCount[3] += Math.round(c.orders * 0.2);
     });
 
     const maxMonthlyRevenue = Math.max(...monthlyRevenues, 1000);
@@ -332,27 +285,12 @@ const getAnalytics = async (req, res, next) => {
     }));
 
     // Customer Growth & VIP Cohorts
-    // Find activation month for each customer (first transaction date)
-    const customerActivations = customers.map(c => {
-      let minDate = new Date(c.createdAt);
-      if (c.transactions.length > 0) {
-        const txDates = c.transactions.map(t => new Date(t.transactionDate).getTime());
-        minDate = new Date(Math.min(...txDates));
-      }
-      const m = minDate.getMonth();
-      return {
-        id: c.id,
-        isVip: c.segment?.name === 'VIP Customers',
-        activationMonth: minDate.getFullYear() === 2026 ? Math.min(5, Math.max(0, m)) : 5
-      };
-    });
-
     let cumulativeTotal = 0;
     let cumulativeVip = 0;
     const customerGrowth = monthNames.map((name, idx) => {
-      const activeThisMonth = customerActivations.filter(c => c.activationMonth === idx);
-      const newTotal = activeThisMonth.length;
-      const newVip = activeThisMonth.filter(c => c.isVip).length;
+      // Mock growth
+      const newTotal = Math.round(customers.length / 6);
+      const newVip = Math.round(customers.filter(c => c.segment?.name === 'VIP Customers').length / 6);
       
       cumulativeTotal += newTotal;
       cumulativeVip += newVip;
@@ -365,14 +303,10 @@ const getAnalytics = async (req, res, next) => {
     });
 
     // Collection Efficiency Categories
-    const totalTransactionsCount = transactions.length;
-    const countPaid = transactions.filter(t => t.status === 'PAID').length;
-    const countPending = transactions.filter(t => t.status === 'PENDING').length;
-    const countOverdue = transactions.filter(t => t.status === 'OVERDUE').length;
-
-    const valPaid = totalTransactionsCount > 0 ? Math.round((countPaid / totalTransactionsCount) * 100) : 0;
-    const valPending = totalTransactionsCount > 0 ? Math.round((countPending / totalTransactionsCount) * 100) : 0;
-    const valOverdue = totalTransactionsCount > 0 ? (100 - valPaid - valPending) : 0;
+    const totalTransactionsCount = customers.reduce((sum, c) => sum + c.orders, 0);
+    const valPaid = collectionEfficiency;
+    const valPending = 100 - valPaid;
+    const valOverdue = overdueCustomersCount > 0 ? 5 : 0; // Mock overdue%
 
     const collectionEfficiencyData = [
       { name: 'Paid Bills', value: valPaid, fill: '#10b981' },
@@ -401,8 +335,8 @@ const getAnalytics = async (req, res, next) => {
 
     // Top Customers Leaderboard
     const topCustomers = customers.map(c => {
-      const spend = c.transactions.reduce((sum, t) => sum + t.amount, 0);
-      const orders = c.transactions.length;
+      const spend = c.totalPurchases;
+      const orders = c.orders;
       let growth = '+5.0%'; // default
       if (c.segment?.name === 'VIP Customers') growth = '+15.2%';
       else if (c.segment?.name === 'High Potential') growth = '+22.1%';
@@ -411,7 +345,7 @@ const getAnalytics = async (req, res, next) => {
       else if (c.segment?.name === 'Lost Customers') growth = '-12.0%';
 
       return {
-        name: c.companyName,
+        name: c.customerName,
         segment: c.segment ? c.segment.name : 'Unassigned',
         spend,
         orders,
@@ -504,9 +438,58 @@ const getAnalytics = async (req, res, next) => {
   }
 };
 
+/**
+ * Creates a new customer manually.
+ */
+const createCustomer = async (req, res, next) => {
+  try {
+    const {
+      id,
+      customerName,
+      totalPurchases,
+      orders,
+      avgOrderValue,
+      paymentDelayDays,
+      outstanding,
+      repeatRate,
+      returns,
+      location,
+      segmentId
+    } = req.body;
+
+    const newCustomer = await prisma.customer.create({
+      data: {
+        id,
+        customerName,
+        totalPurchases: parseFloat(totalPurchases),
+        orders: parseInt(orders),
+        avgOrderValue: parseFloat(avgOrderValue),
+        paymentDelayDays: parseInt(paymentDelayDays),
+        outstanding: parseFloat(outstanding),
+        repeatRate: parseFloat(repeatRate),
+        returns: parseInt(returns),
+        location,
+        segmentId
+      }
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: 'Customer added successfully',
+      customer: newCustomer
+    });
+  } catch (error) {
+    if (error.code === 'P2002') {
+      return res.status(400).json({ success: false, message: 'A customer with this ID already exists.' });
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   getCustomers,
   getCustomerById,
+  createCustomer,
   submitFeedback,
   getAnalytics,
   feedbackSchema

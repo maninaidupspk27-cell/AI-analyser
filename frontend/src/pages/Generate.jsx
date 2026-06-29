@@ -10,7 +10,8 @@ export default function Generate() {
     subject: '',
     requirements: '',
     constraints: '',
-    preferences: ''
+    preferences: '',
+    customerId: ''
   });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -137,6 +138,19 @@ export default function Generate() {
               placeholder="What exactly do you need the AI to analyze or produce?"
               value={formData.requirements}
               onChange={e => setFormData({...formData, requirements: e.target.value})}
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase mb-2">
+              Customer ID (Optional)
+            </label>
+            <input 
+              type="text" 
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              placeholder="e.g. C001 (Auto-fetches data)"
+              value={formData.customerId}
+              onChange={e => setFormData({...formData, customerId: e.target.value})}
             />
           </div>
 

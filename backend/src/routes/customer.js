@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const { getCustomers, getCustomerById, submitFeedback, getAnalytics, feedbackSchema } = require('../controllers/customerController');
+const { getCustomers, getCustomerById, createCustomer, submitFeedback, getAnalytics, feedbackSchema } = require('../controllers/customerController');
 const { getUploadHistory } = require('../controllers/historyController');
 const { uploadCSV, validateCSV } = require('../controllers/csvController');
 const { protect, restrictTo } = require('../middleware/auth');
@@ -15,6 +15,9 @@ router.use(protect);
 
 // GET /api/customers - Retrieves list matching query filters
 router.get('/', getCustomers);
+
+// POST /api/customers - Creates a new customer (Admin or Sales)
+router.post('/', restrictTo('ADMIN', 'SALES_MANAGER'), createCustomer);
 
 // GET /api/customers/analytics - Retrieves aggregated statistics charts
 router.get('/analytics', getAnalytics);

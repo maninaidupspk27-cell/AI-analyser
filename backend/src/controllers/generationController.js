@@ -4,20 +4,48 @@ const { sendGenerationReport } = require('../services/emailService');
 
 const createGeneration = async (req, res, next) => {
   try {
-    const { subject, requirements, constraints, preferences } = req.body;
+    const { subject, requirements, constraints, preferences, customerId } = req.body;
     
     if (!subject || !requirements) {
       return res.status(400).json({ success: false, message: 'Subject and Requirements are mandatory fields.' });
     }
 
+    let finalRequirements = requirements;
+
+    if (customerId) {
+      const customer = await prisma.customer.findUnique({
+        where: { id: customerId }
+      });
+      if (!customer) {
+        return res.status(404).json({ success: false, message: `Customer with ID ${customerId} not found.` });
+      }
+      
+      const customerContext = `
+      --- Customer Profile Context ---
+      ID: ${customer.id}
+      Name: ${customer.customerName}
+      Location: ${customer.location}
+      Total Purchases: $${customer.totalPurchases}
+      Orders: ${customer.orders}
+      Average Order Value: $${customer.avgOrderValue}
+      Outstanding Balance: $${customer.outstanding}
+      Payment Delay: ${customer.paymentDelayDays} days
+      Repeat Rate: ${customer.repeatRate}%
+      Returns: ${customer.returns}
+      ---------------------------------
+      Please analyze this specific customer data and tailor the strategy accordingly.`;
+
+      finalRequirements += '\n\n' + customerContext;
+    }
+
     // Call Gemini Service
-    const aiResponse = await generateCustomAnalysis({ subject, requirements, constraints, preferences });
+    const aiResponse = await generateCustomAnalysis({ subject, requirements: finalRequirements, constraints, preferences });
 
     // Save to Database
     const generation = await prisma.generation.create({
       data: {
         subject,
-        requirements,
+        requirements: finalRequirements,
         constraints: constraints || '',
         preferences: preferences || '',
         aiResponse,

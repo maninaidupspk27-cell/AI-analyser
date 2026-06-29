@@ -95,86 +95,85 @@ async function main() {
   // 3. Create Default Customers
   const customer1 = await prisma.customer.create({
     data: {
-      companyName: 'Acme Corporation',
-      contactName: 'John Doe',
-      email: 'john@acme.com',
-      phone: '+1 (555) 019-2834',
+      id: 'C001',
+      customerName: 'ABC Super Market',
+      totalPurchases: 1500000,
+      orders: 120,
+      avgOrderValue: 12500,
+      paymentDelayDays: 2,
+      outstanding: 15000,
+      repeatRate: 95,
+      returns: 1,
+      location: 'Hyderabad',
       segmentId: vipSegment.id
     }
   });
 
   const customer2 = await prisma.customer.create({
     data: {
-      companyName: 'Beta Industries',
-      contactName: 'Sarah Smith',
-      email: 'sarah@betaind.com',
-      phone: '+1 (555) 014-9982',
-      segmentId: vipSegment.id
+      id: 'C002',
+      customerName: 'XYZ Traders',
+      totalPurchases: 800000,
+      orders: 65,
+      avgOrderValue: 12300,
+      paymentDelayDays: 45,
+      outstanding: 250000,
+      repeatRate: 70,
+      returns: 3,
+      location: 'Vijayawada',
+      segmentId: highPotentialSegment.id
     }
   });
 
   const customer3 = await prisma.customer.create({
     data: {
-      companyName: 'Gamma Enterprises',
-      contactName: 'Richard Roe',
-      email: 'richard@gamma.com',
-      phone: '+1 (555) 012-7489',
-      segmentId: highPotentialSegment.id
+      id: 'C003',
+      customerName: 'Fresh Mart',
+      totalPurchases: 120000,
+      orders: 8,
+      avgOrderValue: 15000,
+      paymentDelayDays: 5,
+      outstanding: 10000,
+      repeatRate: 40,
+      returns: 0,
+      location: 'Chennai',
+      segmentId: regularSegment.id
     }
   });
 
   const customer4 = await prisma.customer.create({
     data: {
-      companyName: 'Delta Logistical',
-      contactName: 'Alice Jones',
-      email: 'alice@deltalog.com',
-      phone: '+1 (555) 015-8833',
-      segmentId: regularSegment.id
+      id: 'C004',
+      customerName: 'PQR Stores',
+      totalPurchases: 90000,
+      orders: 15,
+      avgOrderValue: 6000,
+      paymentDelayDays: 90,
+      outstanding: 80000,
+      repeatRate: 15,
+      returns: 18,
+      location: 'Hyderabad',
+      segmentId: atRiskSegment.id
     }
   });
 
   const customer5 = await prisma.customer.create({
     data: {
-      companyName: 'Epsilon Tech',
-      contactName: 'David Vance',
-      email: 'david@epsilon.com',
-      phone: '+1 (555) 017-6644',
-      segmentId: atRiskSegment.id
-    }
-  });
-
-  const customer6 = await prisma.customer.create({
-    data: {
-      companyName: 'Zeta Solutions',
-      contactName: 'Elena Rostova',
-      email: 'elena@zeta.com',
-      phone: '+1 (555) 019-5511',
-      segmentId: lostSegment.id
+      id: 'C005',
+      customerName: 'Sai Distributors',
+      totalPurchases: 450000,
+      orders: 35,
+      avgOrderValue: 12800,
+      paymentDelayDays: 4,
+      outstanding: 20000,
+      repeatRate: 88,
+      returns: 2,
+      location: 'Bengaluru',
+      segmentId: vipSegment.id
     }
   });
 
   console.log('Created customer profiles.');
-
-  // 4. Create Invoices (Transactions) associated with Customers
-  await prisma.transaction.createMany({
-    data: [
-      { customerId: customer1.id, amount: 5000, status: 'PAID', paymentMethod: 'Wire Transfer', transactionDate: new Date('2026-06-13') },
-      { customerId: customer1.id, amount: 12000, status: 'PAID', paymentMethod: 'ACH', transactionDate: new Date('2026-05-28') },
-      { customerId: customer1.id, amount: 8000, status: 'PAID', paymentMethod: 'Wire Transfer', transactionDate: new Date('2026-05-10') },
-      { customerId: customer1.id, amount: 20000, status: 'PAID', paymentMethod: 'ACH', transactionDate: new Date('2026-04-15') },
-      
-      { customerId: customer4.id, amount: 4500, status: 'OVERDUE', paymentMethod: 'Credit Card', transactionDate: new Date('2026-05-04') },
-      { customerId: customer4.id, amount: 5500, status: 'PAID', paymentMethod: 'ACH', transactionDate: new Date('2026-04-12') },
-      { customerId: customer4.id, amount: 2000, status: 'PAID', paymentMethod: 'Wire Transfer', transactionDate: new Date('2026-03-01') },
-
-      { customerId: customer2.id, amount: 28000, status: 'PAID', paymentMethod: 'Wire Transfer', transactionDate: new Date('2026-06-06') },
-      { customerId: customer3.id, amount: 15500, status: 'PENDING', paymentMethod: 'ACH', transactionDate: new Date('2026-05-21') },
-      { customerId: customer5.id, amount: 9500, status: 'PENDING', paymentMethod: 'Credit Card', transactionDate: new Date('2026-03-18') },
-      { customerId: customer6.id, amount: 1100, status: 'OVERDUE', paymentMethod: 'Wire Transfer', transactionDate: new Date('2026-01-20') }
-    ]
-  });
-
-  console.log('Created transaction records logs.');
   console.log('Database seeding operation completed successfully!');
 }
 
