@@ -23,15 +23,15 @@ model User {
 
 model Customer {
   id               String   @id // User provided CustomerID (e.g. C001)
-  customerName     String
-  totalPurchases   Float
-  orders           Int
-  avgOrderValue    Float
-  paymentDelayDays Int
-  outstanding      Float
-  repeatRate       Float
-  returns          Int
-  location         String
+  customerName     String   @default("Unknown")
+  totalPurchases   Float    @default(0)
+  orders           Int      @default(0)
+  avgOrderValue    Float    @default(0)
+  paymentDelayDays Int      @default(0)
+  outstanding      Float    @default(0)
+  repeatRate       Float    @default(0)
+  returns          Int      @default(0)
+  location         String   @default("Unknown")
   
   segmentId        String?
   segment          Segment? @relation(fields: [segmentId], references: [id])
