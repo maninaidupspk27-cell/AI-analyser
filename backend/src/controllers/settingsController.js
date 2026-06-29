@@ -5,18 +5,24 @@ const settingsPath = path.join(__dirname, '../config/settings.json');
 
 // Helper to read raw configurations from local file
 function readSettingsFile() {
-  if (fs.existsSync(settingsPath)) {
-    try {
-      return JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
-    } catch (err) {
-      console.error('Error parsing settings.json:', err.message);
-    }
-  }
-  return {
+  let settings = {
     apiKey: process.env.GEMINI_API_KEY || 'AIzaSyD_MOCK_GEMINI_KEY_1782A',
     model: 'gemini-2.5-flash',
     systemPrompt: 'Act as an AI Customer Analyst for Manikanta Enterprises. Analyze customer transaction logs and categorize them into segments (VIP, High Potential, Regular, At Risk, Lost). Return a structured response advising our sales team on engagement strategies.'
   };
+
+  if (fs.existsSync(settingsPath)) {
+    try {
+      const fileSettings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+      if (fileSettings.apiKey) settings.apiKey = fileSettings.apiKey;
+      if (fileSettings.model) settings.model = fileSettings.model;
+      if (fileSettings.systemPrompt) settings.systemPrompt = fileSettings.systemPrompt;
+    } catch (err) {
+      console.error('Error parsing settings.json:', err.message);
+    }
+  }
+
+  return settings;
 }
 
 // Helper to write raw configuration settings
