@@ -22,6 +22,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
 
   const menuItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard, roles: ['ADMIN', 'SALES_MANAGER', 'USER'] },
+    { name: 'Customers', path: '/segments', icon: UserCheck, roles: ['ADMIN', 'SALES_MANAGER', 'USER'] },
     { name: 'Upload CSV', path: '/upload', icon: PlusCircle, roles: ['ADMIN', 'SALES_MANAGER'] },
     { name: 'New Generation', path: '/generate', icon: Target, roles: ['ADMIN', 'SALES_MANAGER', 'USER'] },
     { name: 'Analytics', path: '/analytics', icon: BarChart3, roles: ['ADMIN', 'SALES_MANAGER'] },
