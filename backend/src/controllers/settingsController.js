@@ -62,7 +62,7 @@ const updateSettings = async (req, res, next) => {
     const current = readSettingsFile();
 
     // Prevent overwriting credentials with masked keys (e.g. AIzaSyD...782A)
-    const finalApiKey = (apiKey && !apiKey.includes('...')) ? apiKey : current.apiKey;
+    const finalApiKey = (apiKey !== undefined && typeof apiKey === 'string' && !apiKey.includes('...')) ? apiKey : current.apiKey;
 
     const updated = {
       apiKey: finalApiKey,

@@ -17,19 +17,6 @@ export default function Login() {
     setIsSubmitting(false);
   };
 
-  const handleQuickLogin = (role) => {
-    if (role === 'admin') {
-      setEmail('admin@manikanta.com');
-      setPassword('admin123');
-    } else if (role === 'sales') {
-      setEmail('sales@manikanta.com');
-      setPassword('sales123');
-    } else {
-      setEmail('user@manikanta.com');
-      setPassword('user123');
-    }
-  };
-
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background Gradient Orbs */}
@@ -106,33 +93,24 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Quick Testing Helper Tags */}
+        {/* Role Selection Helpers (No Auto-fill) */}
         <div className="mt-8 pt-6 border-t border-slate-800/80">
           <span className="block text-center text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">
-            Quick Sandbox Testing Credentials
+            Available Roles (Manual Login Required)
           </span>
           <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => handleQuickLogin('admin')}
-              className="flex items-center justify-center gap-2 px-3 py-2 bg-slate-950 border border-slate-800 hover:border-emerald-500/30 hover:bg-emerald-500/5 rounded-xl text-xs font-semibold text-slate-300 hover:text-emerald-400 transition-all cursor-pointer"
-            >
-              <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              Admin Portal
-            </button>
-            <button
-              onClick={() => handleQuickLogin('sales')}
-              className="flex items-center justify-center gap-2 px-3 py-2 bg-slate-950 border border-slate-800 hover:border-sky-500/30 hover:bg-sky-500/5 rounded-xl text-xs font-semibold text-slate-300 hover:text-sky-400 transition-all cursor-pointer"
-            >
-              <UserCheck className="w-4 h-4 text-sky-500" />
-              Sales Manager
-            </button>
-            <button
-              onClick={() => handleQuickLogin('user')}
-              className="col-span-2 flex items-center justify-center gap-2 px-3 py-2 bg-slate-950 border border-slate-800 hover:border-purple-500/30 hover:bg-purple-500/5 rounded-xl text-xs font-semibold text-slate-300 hover:text-purple-400 transition-all cursor-pointer"
-            >
-              <Mail className="w-4 h-4 text-purple-500" />
-              Entry-Level Rep
-            </button>
+            <div className="flex flex-col items-center justify-center gap-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-slate-300">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                Admin Portal
+              </div>
+            </div>
+            <div className="flex flex-col items-center justify-center gap-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-slate-300">
+              <div className="flex items-center gap-2">
+                <UserCheck className="w-4 h-4 text-sky-500" />
+                Sales Manager
+              </div>
+            </div>
           </div>
         </div>
 

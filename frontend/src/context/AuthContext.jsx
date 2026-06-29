@@ -55,7 +55,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    if (user?.role === 'ADMIN') {
+      try {
+        await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/settings`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.token}`
+          },
+          body: JSON.stringify({ apiKey: '' })
+        });
+      } catch (err) {
+        console.error('Failed to clear API key on logout', err);
+      }
+    }
     setUser(null);
     localStorage.removeItem('user');
     addToast('Logged out successfully.', 'info');
