@@ -1,22 +1,37 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useSearchParams } from 'react-router-dom';
 import { Send, FileText, Settings, Target, Copy, Download, Star, RefreshCw, FileImage, Mail } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useReactToPrint } from 'react-to-print';
 
 export default function Generate() {
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const initialCustomerId = searchParams.get('customerId') || '';
+
   const [formData, setFormData] = useState({
     subject: '',
     requirements: '',
     constraints: '',
     preferences: '',
-    customerId: ''
+    customerId: initialCustomerId
   });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [rating, setRating] = useState(0);
   const contentRef = useRef(null);
+
+  // If customerId is provided via URL, let's also set a default subject to save time
+  useEffect(() => {
+    if (initialCustomerId && !formData.subject) {
+      setFormData(prev => ({
+        ...prev,
+        subject: `Strategic Analysis for Customer ${initialCustomerId}`,
+        requirements: `Analyze the purchasing patterns and recent activity for customer ${initialCustomerId} and provide a personalized engagement strategy.`
+      }));
+    }
+  }, [initialCustomerId]);
 
   const handleGenerate = async (e) => {
     if (e) e.preventDefault();

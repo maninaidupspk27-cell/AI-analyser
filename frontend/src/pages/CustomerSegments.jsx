@@ -11,7 +11,8 @@ import {
   ShieldAlert,
   SlidersHorizontal,
   Building,
-  Plus
+  Plus,
+  Sparkles
 } from 'lucide-react';
 import AddCustomerModal from '../components/AddCustomerModal';
 
@@ -177,6 +178,7 @@ export default function CustomerSegments() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-800 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
+                <th className="py-4 px-6"><button onClick={() => handleSort('id')} className="flex items-center gap-1 hover:text-slate-300 transition-colors cursor-pointer uppercase">Customer ID <ArrowUpDown className="w-3 h-3 text-indigo-400" /></button></th>
                 <th className="py-4 px-6"><button onClick={() => handleSort('name')} className="flex items-center gap-1 hover:text-slate-300 transition-colors cursor-pointer uppercase">Company Info <ArrowUpDown className="w-3 h-3 text-indigo-400" /></button></th>
                 <th className="py-4 px-6"><button onClick={() => handleSort('totalPurchases')} className="flex items-center gap-1 hover:text-slate-300 transition-colors cursor-pointer uppercase">Total Purchases <ArrowUpDown className="w-3 h-3 text-indigo-400" /></button></th>
                 <th className="py-4 px-6"><button onClick={() => handleSort('orders')} className="flex items-center gap-1 hover:text-slate-300 transition-colors cursor-pointer uppercase">Orders <ArrowUpDown className="w-3 h-3 text-indigo-400" /></button></th>
@@ -187,18 +189,21 @@ export default function CustomerSegments() {
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-xs">
               {loading ? (
-                <tr><td colSpan="6" className="py-8 text-center text-indigo-400 font-medium">Loading customers...</td></tr>
+                <tr><td colSpan="7" className="py-8 text-center text-indigo-400 font-medium">Loading customers...</td></tr>
               ) : paginatedCustomers.length === 0 ? (
-                <tr><td colSpan="6" className="py-8 text-center text-slate-500 font-medium italic">No matching records found.</td></tr>
+                <tr><td colSpan="7" className="py-8 text-center text-slate-500 font-medium italic">No matching records found.</td></tr>
               ) : (
                 paginatedCustomers.map((cust) => (
                   <tr key={cust.id} className="hover:bg-slate-850/30 transition-all duration-150">
+                    <td className="py-4 px-6">
+                      <span className="text-xs font-bold text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded-md border border-indigo-500/20">{cust.id}</span>
+                    </td>
                     <td className="py-4 px-6">
                       <div className="flex flex-col gap-1">
                         <span className="font-semibold text-slate-200 flex items-center gap-1.5 text-sm">
                           <Building className="w-3.5 h-3.5 text-indigo-400 shrink-0" /> {cust.name}
                         </span>
-                        <span className="text-[10px] text-slate-500 font-medium">{cust.id} • {cust.location}</span>
+                        <span className="text-[10px] text-slate-500 font-medium">{cust.location}</span>
                       </div>
                     </td>
                     <td className="py-4 px-6 font-bold text-slate-200 text-sm">${cust.totalPurchases.toLocaleString()}</td>
@@ -206,9 +211,14 @@ export default function CustomerSegments() {
                     <td className="py-4 px-6"><span className={`px-2.5 py-1 text-[10px] font-bold rounded-lg ${getSegmentBadge(cust.segment)}`}>{cust.segment}</span></td>
                     <td className="py-4 px-6">{getStatusBadge(cust.status)}</td>
                     <td className="py-4 px-6 text-right">
-                      <button onClick={() => navigate(`/customer/${cust.id}`)} className="px-3.5 py-2 bg-slate-950 border border-slate-850 hover:border-indigo-500/40 text-slate-300 hover:text-indigo-400 rounded-xl font-bold transition-all flex items-center gap-1.5 ml-auto cursor-pointer shadow-sm">
-                        <Eye className="w-4 h-4" /> View Details
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button onClick={() => navigate(`/generate?customerId=${cust.id}`)} className="px-3.5 py-2 bg-indigo-600/10 border border-indigo-500/30 hover:bg-indigo-600 hover:text-white text-indigo-400 rounded-xl font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm">
+                          <Sparkles className="w-4 h-4" /> Generate
+                        </button>
+                        <button onClick={() => navigate(`/customer/${cust.id}`)} className="px-3.5 py-2 bg-slate-950 border border-slate-850 hover:border-indigo-500/40 text-slate-300 hover:text-indigo-400 rounded-xl font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm">
+                          <Eye className="w-4 h-4" /> Details
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
