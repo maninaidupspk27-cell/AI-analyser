@@ -197,7 +197,7 @@ export default function CustomerDetails() {
                 <DollarSign className="w-4 h-4 text-emerald-400" />
                 <span className="text-[10px] font-bold uppercase tracking-wider">Total Purchases</span>
               </div>
-              <span className="text-xl font-extrabold text-slate-100">${customer.totalPurchases.toLocaleString()}</span>
+              <span className="text-xl font-extrabold text-slate-100">${(customer?.totalPurchases || 0).toLocaleString()}</span>
             </div>
 
             <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-slate-850 transition-colors shadow-lg">
@@ -205,7 +205,7 @@ export default function CustomerDetails() {
                 <ShoppingBag className="w-4 h-4 text-indigo-400" />
                 <span className="text-[10px] font-bold uppercase tracking-wider">Total Orders</span>
               </div>
-              <span className="text-xl font-extrabold text-slate-100">{customer.orders}</span>
+              <span className="text-xl font-extrabold text-slate-100">{customer?.orders || 0}</span>
             </div>
 
             <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-slate-850 transition-colors shadow-lg">
@@ -213,7 +213,7 @@ export default function CustomerDetails() {
                 <DollarSign className="w-4 h-4 text-sky-400" />
                 <span className="text-[10px] font-bold uppercase tracking-wider">Avg Order Value</span>
               </div>
-              <span className="text-xl font-extrabold text-slate-100">${customer.avgOrderValue.toLocaleString()}</span>
+              <span className="text-xl font-extrabold text-slate-100">${(customer?.avgOrderValue || 0).toLocaleString()}</span>
             </div>
 
             <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-slate-850 transition-colors shadow-lg">
@@ -221,7 +221,7 @@ export default function CustomerDetails() {
                 <AlertTriangle className="w-4 h-4 text-rose-400" />
                 <span className="text-[10px] font-bold uppercase tracking-wider">Outstanding Bal</span>
               </div>
-              <span className="text-xl font-extrabold text-rose-400">${customer.outstanding.toLocaleString()}</span>
+              <span className="text-xl font-extrabold text-rose-400">${(customer?.outstanding || 0).toLocaleString()}</span>
             </div>
 
             <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-slate-850 transition-colors shadow-lg">
@@ -229,7 +229,7 @@ export default function CustomerDetails() {
                 <Clock className="w-4 h-4 text-amber-400" />
                 <span className="text-[10px] font-bold uppercase tracking-wider">Payment Delay</span>
               </div>
-              <span className="text-xl font-extrabold text-slate-100">{customer.paymentDelayDays} Days</span>
+              <span className="text-xl font-extrabold text-slate-100">{customer?.paymentDelayDays || 0} Days</span>
             </div>
 
             <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-slate-850 transition-colors shadow-lg">
@@ -237,7 +237,7 @@ export default function CustomerDetails() {
                 <Repeat className="w-4 h-4 text-emerald-500" />
                 <span className="text-[10px] font-bold uppercase tracking-wider">Repeat Rate</span>
               </div>
-              <span className="text-xl font-extrabold text-slate-100">{customer.repeatRate}%</span>
+              <span className="text-xl font-extrabold text-slate-100">{customer?.repeatRate || 0}%</span>
             </div>
             
             <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl hover:border-slate-850 transition-colors shadow-lg">
@@ -245,7 +245,7 @@ export default function CustomerDetails() {
                 <PackageX className="w-4 h-4 text-rose-500" />
                 <span className="text-[10px] font-bold uppercase tracking-wider">Returns</span>
               </div>
-              <span className="text-xl font-extrabold text-slate-100">{customer.returns}</span>
+              <span className="text-xl font-extrabold text-slate-100">{customer?.returns || 0}</span>
             </div>
           </div>
 
