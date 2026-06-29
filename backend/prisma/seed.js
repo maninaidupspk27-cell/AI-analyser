@@ -3,10 +3,10 @@ const bcrypt = require('bcryptjs');
 
 async function main() {
   console.log('Clearing database tables...');
-  await prisma.transaction.deleteMany();
+  await prisma.generation.deleteMany();
+  await prisma.uploadHistory.deleteMany();
   await prisma.customer.deleteMany();
   await prisma.segment.deleteMany();
-  await prisma.uploadHistory.deleteMany();
   await prisma.user.deleteMany();
 
   console.log('Creating database seed assets...');
