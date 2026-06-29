@@ -22,16 +22,16 @@ export default function Generate() {
   const [rating, setRating] = useState(0);
   const contentRef = useRef(null);
 
-  // If customerId is provided via URL, let's also set a default subject to save time
+  // When customerId changes, update subject and requirements automatically
   useEffect(() => {
-    if (initialCustomerId && !formData.subject) {
+    if (formData.customerId) {
       setFormData(prev => ({
         ...prev,
-        subject: `Strategic Analysis for Customer ${initialCustomerId}`,
-        requirements: `Analyze the purchasing patterns and recent activity for customer ${initialCustomerId} and provide a personalized engagement strategy.`
+        subject: `Strategic Analysis for Customer ${prev.customerId}`,
+        requirements: `Analyze the purchasing patterns and recent activity for customer ${prev.customerId} and provide a personalized engagement strategy.`
       }));
     }
-  }, [initialCustomerId]);
+  }, [formData.customerId]);
 
   const handleGenerate = async (e) => {
     if (e) e.preventDefault();
@@ -129,69 +129,15 @@ export default function Generate() {
           <div>
             <label className="block text-xs font-semibold text-slate-400 uppercase mb-2 flex items-center gap-2">
               <Target className="w-3.5 h-3.5" />
-              Primary Subject / Context
+              Customer ID
             </label>
             <input 
               type="text" 
               required
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-              placeholder="e.g. VIP Client Retention Strategy"
-              value={formData.subject}
-              onChange={e => setFormData({...formData, subject: e.target.value})}
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase mb-2 flex items-center gap-2">
-              <FileText className="w-3.5 h-3.5" />
-              Specific Requirements
-            </label>
-            <textarea 
-              required
-              rows={4}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-              placeholder="What exactly do you need the AI to analyze or produce?"
-              value={formData.requirements}
-              onChange={e => setFormData({...formData, requirements: e.target.value})}
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase mb-2">
-              Customer ID (Optional)
-            </label>
-            <input 
-              type="text" 
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-              placeholder="e.g. C001 (Auto-fetches data)"
+              placeholder="e.g. C001"
               value={formData.customerId}
               onChange={e => setFormData({...formData, customerId: e.target.value})}
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase mb-2">
-              Constraints (Optional)
-            </label>
-            <textarea 
-              rows={2}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-              placeholder="e.g. Budget under $10,000, Must be deployed in 2 weeks"
-              value={formData.constraints}
-              onChange={e => setFormData({...formData, constraints: e.target.value})}
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase mb-2">
-              Preferences (Optional)
-            </label>
-            <input 
-              type="text" 
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-              placeholder="e.g. Professional tone, Include bullet points"
-              value={formData.preferences}
-              onChange={e => setFormData({...formData, preferences: e.target.value})}
             />
           </div>
 

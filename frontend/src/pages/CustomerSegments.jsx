@@ -12,8 +12,8 @@ import {
   SlidersHorizontal,
   Building,
   Plus,
-  Sparkles,
-  Trash2
+  Trash2,
+  Edit
 } from 'lucide-react';
 import AddCustomerModal from '../components/AddCustomerModal';
 
@@ -225,15 +225,12 @@ export default function CustomerSegments() {
                     <td className="py-4 px-6"><span className={`px-2.5 py-1 text-[10px] font-bold rounded-lg ${getSegmentBadge(cust.segment)}`}>{cust.segment || 'Unassigned'}</span></td>
                     <td className="py-4 px-6"><span className={getStatusBadge(cust.status)}>{cust.status}</span></td>
                     <td className="py-4 px-6 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button onClick={() => navigate(`/generate?customerId=${cust.id}`)} className="px-3.5 py-2 bg-indigo-600/10 border border-indigo-500/30 hover:bg-indigo-600 hover:text-white text-indigo-400 rounded-xl font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm">
-                          <Sparkles className="w-4 h-4" /> Generate
-                        </button>
-                        <button onClick={() => navigate(`/customer/${cust.id}`)} className="px-3.5 py-2 bg-slate-950 border border-slate-850 hover:border-indigo-500/40 text-slate-300 hover:text-indigo-400 rounded-xl font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm" title="View Details">
-                          <Eye className="w-4 h-4" />
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => navigate(`/customer/${cust.id}`)} className="px-3.5 py-2 bg-slate-950 border border-slate-850 hover:border-indigo-500/40 text-slate-300 hover:text-indigo-400 rounded-xl font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm" title="Edit/View Details">
+                          <Edit className="w-4 h-4" /> Edit
                         </button>
                         <button onClick={() => handleDelete(cust.id)} className="px-3.5 py-2 bg-slate-950 border border-slate-850 hover:border-rose-500/40 text-slate-400 hover:text-rose-400 rounded-xl font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm" title="Delete Customer">
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4" /> Delete
                         </button>
                       </div>
                     </td>
