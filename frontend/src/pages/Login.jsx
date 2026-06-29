@@ -36,7 +36,11 @@ export default function Login() {
         </div>
 
         {/* Credentials Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5" autoComplete="off">
+          {/* Dummy inputs to trick browser autofill */}
+          <input type="email" name="fake_email_remembered" style={{ display: 'none' }} />
+          <input type="password" name="fake_password_remembered" style={{ display: 'none' }} />
+          
           {/* Email Input */}
           <div>
             <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
