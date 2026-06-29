@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { X, Save, RefreshCw } from 'lucide-react';
 
@@ -18,6 +18,24 @@ export default function AddCustomerModal({ isOpen, onClose, onCustomerAdded }) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setFormData({
+        id: '',
+        customerName: '',
+        totalPurchases: '',
+        orders: '',
+        avgOrderValue: '',
+        paymentDelayDays: '',
+        outstanding: '',
+        repeatRate: '',
+        returns: '',
+        location: ''
+      });
+      setError(null);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
