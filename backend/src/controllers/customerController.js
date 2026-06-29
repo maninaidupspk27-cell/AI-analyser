@@ -534,11 +534,33 @@ const updateCustomer = async (req, res, next) => {
   }
 };
 
+/**
+ * Deletes a customer manually.
+ */
+const deleteCustomer = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await prisma.customer.delete({
+      where: { id }
+    });
+    return res.status(200).json({
+      success: true,
+      message: 'Customer deleted successfully'
+    });
+  } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ success: false, message: 'Customer not found.' });
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   getCustomers,
   getCustomerById,
   createCustomer,
   updateCustomer,
+  deleteCustomer,
   submitFeedback,
   getAnalytics,
   feedbackSchema

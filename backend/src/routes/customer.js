@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const { getCustomers, getCustomerById, createCustomer, updateCustomer, submitFeedback, getAnalytics, feedbackSchema } = require('../controllers/customerController');
+const { getCustomers, getCustomerById, createCustomer, updateCustomer, deleteCustomer, submitFeedback, getAnalytics, feedbackSchema } = require('../controllers/customerController');
 const { getUploadHistory } = require('../controllers/historyController');
 const { uploadCSV, validateCSV } = require('../controllers/csvController');
 const { protect, restrictTo } = require('../middleware/auth');
@@ -36,6 +36,9 @@ router.get('/:id', getCustomerById);
 
 // PUT /api/customers/:id - Updates details for a specific customer
 router.put('/:id', restrictTo('ADMIN', 'SALES_MANAGER'), updateCustomer);
+
+// DELETE /api/customers/:id - Deletes a customer
+router.delete('/:id', restrictTo('ADMIN', 'SALES_MANAGER'), deleteCustomer);
 
 // POST /api/customers/:id/feedback - Submits feedback for AI recommendationsgs reviews
 router.post('/:id/feedback', validateBody(feedbackSchema), submitFeedback);

@@ -12,7 +12,8 @@ import {
   SlidersHorizontal,
   Building,
   Plus,
-  Sparkles
+  Sparkles,
+  Trash2
 } from 'lucide-react';
 import AddCustomerModal from '../components/AddCustomerModal';
 
@@ -36,25 +37,38 @@ export default function CustomerSegments() {
     setLoading(true);
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/customers`, {
-        headers: {
-          'Authorization': `Bearer ${user?.token}`
-        }
+        headers: { 'Authorization': `Bearer ${user?.token}` }
       });
       const data = await response.json();
-      if (data.success) {
-        setCustomers(data.customers);
-      }
+      if (data.success) setCustomers(data.customers);
     } catch (err) {
-      console.error('Failed to fetch customers:', err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (user?.token) {
-      fetchCustomers();
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this customer?')) return;
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/customers/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${user?.token}` }
+      });
+      const data = await response.json();
+      if (data.success) {
+        fetchCustomers();
+      } else {
+        alert(data.message || 'Failed to delete customer');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error while deleting customer');
     }
+  };
+
+  useEffect(() => {
+    if (user?.token) fetchCustomers();
   }, [user?.token]);
 
   const handleSort = (field) => {
@@ -215,8 +229,11 @@ export default function CustomerSegments() {
                         <button onClick={() => navigate(`/generate?customerId=${cust.id}`)} className="px-3.5 py-2 bg-indigo-600/10 border border-indigo-500/30 hover:bg-indigo-600 hover:text-white text-indigo-400 rounded-xl font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm">
                           <Sparkles className="w-4 h-4" /> Generate
                         </button>
-                        <button onClick={() => navigate(`/customer/${cust.id}`)} className="px-3.5 py-2 bg-slate-950 border border-slate-850 hover:border-indigo-500/40 text-slate-300 hover:text-indigo-400 rounded-xl font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm">
-                          <Eye className="w-4 h-4" /> Details
+                        <button onClick={() => navigate(`/customer/${cust.id}`)} className="px-3.5 py-2 bg-slate-950 border border-slate-850 hover:border-indigo-500/40 text-slate-300 hover:text-indigo-400 rounded-xl font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm" title="View Details">
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => handleDelete(cust.id)} className="px-3.5 py-2 bg-slate-950 border border-slate-850 hover:border-rose-500/40 text-slate-400 hover:text-rose-400 rounded-xl font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm" title="Delete Customer">
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>
