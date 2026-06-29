@@ -108,7 +108,7 @@ export default function Dashboard() {
           <div className="flex justify-between items-start">
             <div className="space-y-2">
               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Total Revenue</span>
-              <span className="text-3xl font-extrabold text-slate-100">${summary.totalRevenue.toLocaleString()}</span>
+              <span className="text-3xl font-extrabold text-slate-100">${(summary?.totalRevenue || 0).toLocaleString()}</span>
             </div>
             <div className="p-3 bg-indigo-600/10 rounded-xl group-hover:scale-105 transition-transform">
               <DollarSign className="w-5 h-5 text-indigo-400" />
@@ -116,7 +116,7 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center gap-1.5 mt-4 text-xs font-medium text-emerald-400">
             <ArrowUpRight className="w-4 h-4" />
-            <span>{summary.revenueChangePercent}</span>
+            <span>{summary?.revenueChangePercent || '+0.0%'}</span>
             <span className="text-slate-500">from last month</span>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function Dashboard() {
           <div className="flex justify-between items-start">
             <div className="space-y-2">
               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Active Accounts</span>
-              <span className="text-3xl font-extrabold text-slate-100">{summary.totalCustomers}</span>
+              <span className="text-3xl font-extrabold text-slate-100">{summary?.totalCustomers || 0}</span>
             </div>
             <div className="p-3 bg-emerald-600/10 rounded-xl group-hover:scale-105 transition-transform">
               <Users className="w-5 h-5 text-emerald-400" />
@@ -134,7 +134,7 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center gap-1.5 mt-4 text-xs font-medium text-emerald-400">
             <ArrowUpRight className="w-4 h-4" />
-            <span>{summary.customerChangePercent}</span>
+            <span>{summary?.customerChangePercent || '+0.0%'}</span>
             <span className="text-slate-500">new signups today</span>
           </div>
         </div>
@@ -144,7 +144,7 @@ export default function Dashboard() {
           <div className="flex justify-between items-start">
             <div className="space-y-2">
               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Overdue Accounts</span>
-              <span className="text-3xl font-extrabold text-slate-100">{summary.overdueCustomersCount}</span>
+              <span className="text-3xl font-extrabold text-slate-100">{summary?.overdueCustomersCount || 0}</span>
             </div>
             <div className="p-3 bg-amber-600/10 rounded-xl group-hover:scale-105 transition-transform">
               <AlertTriangle className="w-5 h-5 text-amber-400" />
@@ -152,7 +152,7 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center gap-1.5 mt-4 text-xs font-medium text-rose-400">
             <ArrowDownRight className="w-4 h-4" />
-            <span>{summary.overdueChangeText}</span>
+            <span>{summary?.overdueChangeText || '0 overdue requires action'}</span>
           </div>
         </div>
 
@@ -228,7 +228,7 @@ export default function Dashboard() {
                   dataKey="value"
                 >
                   {segmentDistributionData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell key={`cell-${index}`} fill={entry?.color || '#000'} />
                   ))}
                 </Pie>
                 <Tooltip 
@@ -244,7 +244,7 @@ export default function Dashboard() {
             </ResponsiveContainer>
             {/* Center label */}
             <div className="absolute flex flex-col items-center justify-center">
-              <span className="text-2xl font-black text-slate-100">{summary.totalCustomers}</span>
+              <span className="text-2xl font-black text-slate-100">{summary?.totalCustomers || 0}</span>
               <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Total Clients</span>
             </div>
           </div>
@@ -254,10 +254,10 @@ export default function Dashboard() {
             {segmentDistributionData.map((entry, index) => (
               <div key={index} className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }}></div>
-                  <span className="text-slate-400 font-medium">{entry.name}</span>
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry?.color || '#000' }}></div>
+                  <span className="text-slate-400 font-medium">{entry?.name || 'Unknown'}</span>
                 </div>
-                <span className="text-slate-300 font-semibold">{entry.value}</span>
+                <span className="text-slate-300 font-semibold">{entry?.value || 0}</span>
               </div>
             ))}
           </div>
@@ -283,14 +283,14 @@ export default function Dashboard() {
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-sm">
               {recentActivityLog.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-850/40 transition-colors">
+                <tr key={log?.id || Math.random()} className="hover:bg-slate-850/40 transition-colors">
                   <td className="py-3.5 px-4">
-                    <span className={`px-2 py-1.5 text-[10px] font-bold rounded-lg ${log.badge}`}>
-                      {log.action}
+                    <span className={`px-2 py-1.5 text-[10px] font-bold rounded-lg ${log?.badge || 'bg-slate-500'}`}>
+                      {log?.action || 'Unknown'}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 font-medium text-slate-300">{log.details}</td>
-                  <td className="py-3.5 px-4 text-right text-xs text-slate-500 font-medium">{log.time}</td>
+                  <td className="py-3.5 px-4 font-medium text-slate-300">{log?.details || '...'}</td>
+                  <td className="py-3.5 px-4 text-right text-xs text-slate-500 font-medium">{log?.time || ''}</td>
                 </tr>
               ))}
             </tbody>
