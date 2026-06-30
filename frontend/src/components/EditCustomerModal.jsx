@@ -130,7 +130,7 @@ export default function EditCustomerModal({ isOpen, onClose, onCustomerUpdated, 
           <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors">
             Cancel
           </button>
-          <button form="edit-customer-form" type="submit" disabled={loading} className="px-5 py-2.5 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors flex items-center gap-2">
+          <button onClick={handleSubmit} type="button" disabled={loading} className="px-5 py-2.5 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors flex items-center gap-2">
             {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             Save Changes
           </button>

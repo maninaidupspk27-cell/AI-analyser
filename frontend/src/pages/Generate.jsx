@@ -33,7 +33,7 @@ export default function Generate() {
     }
   }, [formData.customerId]);
 
-  const handleGenerate = async (e) => {
+  const handleGenerate = async (e, isRegenerate = false) => {
     if (e) e.preventDefault();
     setLoading(true);
     setResult(null);
@@ -46,7 +46,7 @@ export default function Generate() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${user?.token}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ ...formData, isRegenerate })
       });
       const data = await response.json();
       if (data.success) {
@@ -105,7 +105,9 @@ export default function Generate() {
       });
       const data = await response.json();
       if (data.success) {
-        alert('Email dispatched successfully! Check backend logs for the Ethereal preview link.');
+        if (window.confirm('Email successfully dispatched to a secure test inbox!\n\nNote: As this is a development environment, no actual emails are sent to the recipient. Would you like to open the simulated email preview now?')) {
+          if (data.previewUrl) window.open(data.previewUrl, '_blank');
+        }
       } else {
         alert(data.message || 'Failed to send email.');
       }
@@ -114,6 +116,7 @@ export default function Generate() {
       alert('An error occurred while sending the email.');
     }
   };
+
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-8rem)]">
@@ -241,7 +244,7 @@ export default function Generate() {
               </div>
             </div>
             <button 
-              onClick={() => handleGenerate()}
+              onClick={() => handleGenerate(null, true)}
               className="text-sm font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-2"
             >
               <RefreshCw className="w-4 h-4" />

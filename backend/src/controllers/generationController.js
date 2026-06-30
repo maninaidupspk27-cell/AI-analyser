@@ -4,7 +4,7 @@ const { sendGenerationReport } = require('../services/emailService');
 
 const createGeneration = async (req, res, next) => {
   try {
-    const { subject, requirements, constraints, preferences, customerId } = req.body;
+    const { subject, requirements, constraints, preferences, customerId, isRegenerate } = req.body;
     
     if (!subject || !requirements) {
       return res.status(400).json({ success: false, message: 'Subject and Requirements are mandatory fields.' });
@@ -14,16 +14,20 @@ const createGeneration = async (req, res, next) => {
 
     if (customerId) {
       const customer = await prisma.customer.findUnique({
-        where: { id: customerId }
+        where: { id: customerId },
+        include: { segment: true }
       });
       if (!customer) {
         return res.status(404).json({ success: false, message: `Customer with ID ${customerId} not found.` });
       }
       
+      const segmentName = customer.segment ? customer.segment.name : 'Unassigned';
+      
       const customerContext = `
       --- Customer Profile Context ---
       ID: ${customer.id}
       Name: ${customer.customerName}
+      Segment: ${segmentName}
       Location: ${customer.location}
       Total Purchases: $${customer.totalPurchases}
       Orders: ${customer.orders}
@@ -33,13 +37,25 @@ const createGeneration = async (req, res, next) => {
       Repeat Rate: ${customer.repeatRate}%
       Returns: ${customer.returns}
       ---------------------------------
-      Please analyze this specific customer data and tailor the strategy accordingly.`;
+      Please analyze this specific customer data and tailor the strategy accordingly. 
+      CRITICAL INSTRUCTION: You MUST explicitly mention and base your strategy on the customer's Segment (${segmentName}).`;
 
       finalRequirements += '\n\n' + customerContext;
     }
 
     // Call Gemini Service
-    const aiResponse = await generateCustomAnalysis({ subject, requirements: finalRequirements, constraints, preferences });
+    let aiResponse = await generateCustomAnalysis({ subject, requirements: finalRequirements, constraints, preferences });
+
+    // Programmatically inject the Customer Segment header if this is the first generation
+    if (!isRegenerate && customerId) {
+      const customer = await prisma.customer.findUnique({
+        where: { id: customerId },
+        include: { segment: true }
+      });
+      if (customer && customer.segment) {
+        aiResponse = `# 🎯 CUSTOMER SEGMENT: ${customer.segment.name.toUpperCase()}\n\n---\n\n` + aiResponse;
+      }
+    }
 
     // Save to Database
     const generation = await prisma.generation.create({

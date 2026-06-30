@@ -209,14 +209,12 @@ const getAnalytics = async (req, res, next) => {
       take: 5
     });
 
-    const ratings = await prisma.rating.findMany({
+    const ratedGenerations = await prisma.generation.findMany({
+      where: {
+        rating: { not: null }
+      },
       include: {
-        user: true,
-        recommendation: {
-          include: {
-            segment: true
-          }
-        }
+        user: true
       },
       orderBy: {
         createdAt: 'desc'
@@ -386,11 +384,11 @@ const getAnalytics = async (req, res, next) => {
       });
     });
 
-    ratings.forEach(r => {
+    ratedGenerations.forEach(r => {
       activityLogs.push({
         id: `rating-${r.id}`,
-        action: 'Rating Submitted',
-        details: `${r.user?.fullName || 'User'} rated ${r.recommendation?.segment?.name || 'Segment'} strategy ${r.ratingValue}★`,
+        action: 'Strategy Rated',
+        details: `${r.user?.fullName || 'User'} rated AI Strategy "${r.subject || 'Strategy'}" with ${r.rating}★`,
         time: getRelativeTime(r.createdAt),
         createdAt: new Date(r.createdAt).getTime(),
         badge: 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
