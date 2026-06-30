@@ -21,7 +21,29 @@ const createGeneration = async (req, res, next) => {
         return res.status(404).json({ success: false, message: `Customer with ID ${customerId} not found.` });
       }
       
-      const segmentName = customer.segment ? customer.segment.name : 'Unassigned';
+      let segmentName = customer.segment ? customer.segment.name : 'Unassigned';
+
+      // Auto-assign segment if currently unassigned before generating the report
+      if (segmentName === 'Unassigned') {
+        let targetSegmentName = 'Regular Customers';
+        if (customer.paymentDelayDays > 30) {
+          targetSegmentName = customer.outstanding > 10000 ? 'At Risk' : 'Lost Customers';
+        } else if (customer.totalPurchases >= 20000) {
+          targetSegmentName = 'VIP Customers';
+        } else if (customer.totalPurchases >= 10000) {
+          targetSegmentName = 'High Potential';
+        }
+
+        const segment = await prisma.segment.findUnique({ where: { name: targetSegmentName } });
+        if (segment) {
+          await prisma.customer.update({
+            where: { id: customer.id },
+            data: { segmentId: segment.id }
+          });
+          segmentName = targetSegmentName;
+          customer.segment = segment;
+        }
+      }
       
       const customerContext = `
       --- Customer Profile Context ---
