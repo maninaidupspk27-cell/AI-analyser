@@ -14,7 +14,7 @@ export default function Login() {
     if (!email || !password) return;
 
     setIsSubmitting(true);
-    await login(email, password);
+    await login(email, password, selectedPortal);
     setIsSubmitting(false);
   };
 

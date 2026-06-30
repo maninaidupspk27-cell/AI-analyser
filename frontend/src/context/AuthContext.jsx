@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (email, password, portalType) => {
     setLoading(true);
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/login`, {
@@ -34,6 +34,14 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || 'Authentication failed');
+      }
+
+      // Enforce portal-specific role checks
+      if (portalType === 'admin' && data.user.role !== 'ADMIN') {
+        throw new Error('Access Denied: Admin credentials are required for the Admin Portal.');
+      }
+      if (portalType === 'sales' && data.user.role !== 'SALES_MANAGER') {
+        throw new Error('Access Denied: Sales Manager credentials are required for the Sales Portal.');
       }
 
       const sessionUser = {
